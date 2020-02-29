@@ -11,7 +11,6 @@ defmodule TpLinkHs100.Switch.Server do
   use GenServer
   require Logger
 
-  alias TpLinkHs100.Encryption
   alias TpLinkHs100.Switch.Private
 
   def init(opts) do
@@ -31,46 +30,29 @@ defmodule TpLinkHs100.Switch.Server do
   # --- Callbacks
 
   def handle_cast(:refresh, state) do
-    :ok =
-      :gen_udp.send(
-        state.socket,
-        to_charlist(state.options[:broadcast_address]),
-        state.options[:broadcast_port],
-        Encryption.encrypt(Poison.encode!(%{"system" => %{"get_sysinfo" => %{}}}))
-      )
-
+    packet = %{"system" => %{"get_sysinfo" => %{}}}
+    case Private.send_broadcast_packet(state, packet) do
+      :ok -> nil
+      {:error, error} -> Logger.error("Got send_broadcast_packet error #{error}.")
+    end
     {:noreply, state}
   end
 
   def handle_cast({:off, id}, state) do
-    ip =
-      state.devices
-      |> Map.get(id)
-      |> Map.get(:ip)
-
-    :gen_udp.send(
-      state.socket,
-      to_charlist(ip),
-      state.options[:broadcast_port],
-      Encryption.encrypt(%{system: %{set_relay_state: %{state: 0}}} |> Poison.encode!())
-    )
-
+    packet = %{system: %{set_relay_state: %{state: 0}}}
+    case Private.send_targeted_packet(state, id, packet) do
+      :ok -> nil
+      {:error, error} -> Logger.error("Got send_targeted_packet error #{error}.")
+    end
     {:noreply, state}
   end
 
   def handle_cast({:on, id}, state) do
-    ip =
-      state.devices
-      |> Map.get(id)
-      |> Map.get(:ip)
-
-    :gen_udp.send(
-      state.socket,
-      to_charlist(ip),
-      state.options[:broadcast_port],
-      Encryption.encrypt(%{system: %{set_relay_state: %{state: 1}}} |> Poison.encode!())
-    )
-
+    packet = %{system: %{set_relay_state: %{state: 1}}}
+    case Private.send_targeted_packet(state, id, packet) do
+      :ok -> nil
+      {:error, error} -> Logger.error("Got send_targeted_packet error #{error}.")
+    end
     {:noreply, state}
   end
 

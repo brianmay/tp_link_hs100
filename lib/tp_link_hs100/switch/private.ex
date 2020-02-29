@@ -30,6 +30,27 @@ defmodule TpLinkHs100.Switch.Private do
     end
   end
 
+  defp send_packet(%State{} = state, ip, packet) do
+    :ok =
+      :gen_udp.send(
+        state.socket,
+        to_charlist(ip),
+        state.options[:broadcast_port],
+        Encryption.encrypt(Poison.encode!(packet))
+      )
+  end
+
+  def send_broadcast_packet(%State{} = state, packet) do
+    send_packet(state, state.options[:broadcast_address], packet)
+  end
+
+  def send_targeted_packet(%State{} = state, id, packet) do
+    case Map.fetch(state.devices, id) do
+      {:ok, device} -> send_packet(state, device.ip, packet)
+      :error -> {:error, "No such device id #{id}."}
+    end
+  end
+
   def create_udp_socket() do
     :gen_udp.open(0, [
       # Sending data as binary.
