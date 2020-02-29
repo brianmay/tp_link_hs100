@@ -3,8 +3,9 @@ defmodule TpLinkHs100.Application do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
+
     children = [
-      worker(TpLinkHs100, []),
+      worker(TpLinkHs100, [])
     ]
 
     opts = [strategy: :one_for_one, name: TpLinkHs100.Supervisor]

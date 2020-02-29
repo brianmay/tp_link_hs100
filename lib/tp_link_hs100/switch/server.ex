@@ -1,5 +1,4 @@
 defmodule TpLinkHs100.Switch.Server do
-
   @default_options [
     # Port used for broadcasts.
     broadcast_port: 9999,
@@ -29,43 +28,49 @@ defmodule TpLinkHs100.Switch.Server do
     GenServer.cast(process, :refresh)
   end
 
-  #--- Callbacks
+  # --- Callbacks
 
   def handle_cast(:refresh, state) do
-    :ok = :gen_udp.send(
-      state.socket,
-      to_charlist(state.options[:broadcast_address]),
-      state.options[:broadcast_port],
-      Encryption.encrypt(Poison.encode!(%{"system" => %{"get_sysinfo" => %{}}}))
-    )
+    :ok =
+      :gen_udp.send(
+        state.socket,
+        to_charlist(state.options[:broadcast_address]),
+        state.options[:broadcast_port],
+        Encryption.encrypt(Poison.encode!(%{"system" => %{"get_sysinfo" => %{}}}))
+      )
+
     {:noreply, state}
   end
 
   def handle_cast({:off, id}, state) do
-    ip = state.devices
-    |> Map.get(id)
-    |> Map.get(:ip)
+    ip =
+      state.devices
+      |> Map.get(id)
+      |> Map.get(:ip)
 
     :gen_udp.send(
       state.socket,
       to_charlist(ip),
       state.options[:broadcast_port],
-      Encryption.encrypt(%{system: %{set_relay_state: %{state: 0}}} |> Poison.encode!)
+      Encryption.encrypt(%{system: %{set_relay_state: %{state: 0}}} |> Poison.encode!())
     )
+
     {:noreply, state}
   end
 
   def handle_cast({:on, id}, state) do
-    ip = state.devices
-    |> Map.get(id)
-    |> Map.get(:ip)
+    ip =
+      state.devices
+      |> Map.get(id)
+      |> Map.get(:ip)
 
     :gen_udp.send(
       state.socket,
       to_charlist(ip),
       state.options[:broadcast_port],
-      Encryption.encrypt(%{system: %{set_relay_state: %{state: 1}}} |> Poison.encode!)
+      Encryption.encrypt(%{system: %{set_relay_state: %{state: 1}}} |> Poison.encode!())
     )
+
     {:noreply, state}
   end
 
@@ -78,5 +83,4 @@ defmodule TpLinkHs100.Switch.Server do
     state = Private.handle_response(state, ip, port, data)
     {:noreply, state}
   end
-
 end
