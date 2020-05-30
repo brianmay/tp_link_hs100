@@ -1,4 +1,6 @@
 defmodule TpLinkHs100.Switch.Server do
+  @moduledoc false
+
   @default_options [
     # Port used for broadcasts.
     broadcast_port: 9999,
@@ -31,28 +33,34 @@ defmodule TpLinkHs100.Switch.Server do
 
   def handle_cast(:refresh, state) do
     packet = %{"system" => %{"get_sysinfo" => %{}}}
+
     case Private.send_broadcast_packet(state, packet) do
       :ok -> nil
-      {:error, error} -> Logger.error("Got send_broadcast_packet error #{error}.")
+      {:error, error} -> Logger.error("Got send_broadcast_packet error #{inspect(error)}.")
     end
+
     {:noreply, state}
   end
 
   def handle_cast({:off, id}, state) do
     packet = %{system: %{set_relay_state: %{state: 0}}}
+
     case Private.send_targeted_packet(state, id, packet) do
       :ok -> nil
-      {:error, error} -> Logger.error("Got send_targeted_packet error #{error}.")
+      {:error, error} -> Logger.error("Got send_targeted_packet error #{inspect(error)}.")
     end
+
     {:noreply, state}
   end
 
   def handle_cast({:on, id}, state) do
     packet = %{system: %{set_relay_state: %{state: 1}}}
+
     case Private.send_targeted_packet(state, id, packet) do
       :ok -> nil
-      {:error, error} -> Logger.error("Got send_targeted_packet error #{error}.")
+      {:error, error} -> Logger.error("Got send_targeted_packet error #{inspect(error)}.")
     end
+
     {:noreply, state}
   end
 

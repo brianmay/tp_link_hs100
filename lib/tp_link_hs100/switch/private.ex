@@ -1,10 +1,13 @@
 defmodule TpLinkHs100.Switch.Private do
+  @moduledoc false
+
   require Logger
   alias TpLinkHs100.Encryption
 
   # --- Internals
 
   defmodule State do
+    @moduledoc false
     defstruct options: [],
               socket: nil,
               timer: nil,
@@ -24,20 +27,18 @@ defmodule TpLinkHs100.Switch.Private do
         state
 
       other ->
-        IO.puts("unknown message to parse")
-        IO.inspect(other)
+        IO.puts("unknown message to parse: #{inspect(other)}")
         state
     end
   end
 
   defp send_packet(%State{} = state, ip, packet) do
-    :ok =
-      :gen_udp.send(
-        state.socket,
-        to_charlist(ip),
-        state.options[:broadcast_port],
-        Encryption.encrypt(Poison.encode!(packet))
-      )
+    :gen_udp.send(
+      state.socket,
+      to_charlist(ip),
+      state.options[:broadcast_port],
+      Encryption.encrypt(Poison.encode!(packet))
+    )
   end
 
   def send_broadcast_packet(%State{} = state, packet) do
@@ -51,7 +52,7 @@ defmodule TpLinkHs100.Switch.Private do
     end
   end
 
-  def create_udp_socket() do
+  def create_udp_socket do
     :gen_udp.open(0, [
       # Sending data as binary.
       :binary,

@@ -1,9 +1,11 @@
 defmodule TpLinkHs100.Switch do
+  @moduledoc "Interact with a switch."
+
   def start_link(opts \\ []) do
     GenServer.start_link(TpLinkHs100.Switch.Server, opts, name: __MODULE__)
   end
 
-  def refresh() do
+  def refresh do
     GenServer.cast(__MODULE__, :refresh)
   end
 

@@ -4,8 +4,8 @@ defmodule TpLinkHs100.Encryption do
   @doc """
   Encrypting a given binary.
   """
-  def encrypt(input, firstKey \\ 0xAB) when is_binary(input) and firstKey in 0..255,
-    do: do_encrypt(firstKey, input, [])
+  def encrypt(input, first_key \\ 0xAB) when is_binary(input) and first_key in 0..255,
+    do: do_encrypt(first_key, input, [])
 
   defp do_encrypt(_key, <<>>, output) do
     output
@@ -31,8 +31,8 @@ defmodule TpLinkHs100.Encryption do
   @doc """
   Decrypting a encrypted binary.
   """
-  def decrypt(input, firstKey \\ 0x2B) when is_binary(input) and firstKey in 0..255,
-    do: do_decrypt(firstKey, input, [])
+  def decrypt(input, first_key \\ 0x2B) when is_binary(input) and first_key in 0..255,
+    do: do_decrypt(first_key, input, [])
 
   defp do_decrypt(_key, <<>>, output) do
     output

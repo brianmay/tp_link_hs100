@@ -12,7 +12,8 @@ defmodule TpLinkHs100.Mixfile do
       package: package(),
       description: description(),
       source_url: "https://github.com/jessiahr/map_diff",
-      name: "tp_link_hs100"
+      name: "tp_link_hs100",
+      dialyzer: dialyzer()
     ]
   end
 
@@ -53,7 +54,16 @@ defmodule TpLinkHs100.Mixfile do
   defp deps do
     [
       {:poison, "~> 4.0"},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0-rc.3", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_core_path: "priv/plts",
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
     ]
   end
 end
