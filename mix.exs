@@ -56,7 +56,8 @@ defmodule TpLinkHs100.Mixfile do
       {:poison, "~> 4.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0.0-rc.3", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.3", only: [:dev, :test], runtime: false},
+      {:qex, "~> 0.5"}
     ]
   end
 

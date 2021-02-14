@@ -7,7 +7,8 @@ defmodule TpLinkHs100.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(TpLinkHs100, [])
+      {TpLinkHs100.Client.Server, []},
+      {DynamicSupervisor, name: TpLinkHs100.DeviceSupervisor, strategy: :one_for_one}
     ]
 
     opts = [strategy: :one_for_one, name: TpLinkHs100.Supervisor]
