@@ -74,7 +74,8 @@ defmodule TpLinkHs100.Client.Private do
 
     {:ok, pid} =
       DynamicSupervisor.start_child(TpLinkHs100.DeviceSupervisor, {Device.Server, opts})
-      Process.monitor(pid)
+
+    Process.monitor(pid)
 
     %Device{pid: pid, id: device_id, ip: ip, port: port, sysinfo: sysinfo}
   end
