@@ -2,9 +2,9 @@ defmodule TpLinkHs100.Client.Private do
   @moduledoc false
 
   require Logger
-  alias TpLinkHs100.Private
-  alias TpLinkHs100.Encryption
   alias TpLinkHs100.Device
+  alias TpLinkHs100.Encryption
+  alias TpLinkHs100.Private
 
   # --- Internals
 

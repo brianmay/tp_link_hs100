@@ -4,8 +4,8 @@ defmodule TpLinkHs100.Client.Server do
   use GenServer
   require Logger
 
-  alias TpLinkHs100.Client.Private.State
   alias TpLinkHs100.Client.Private
+  alias TpLinkHs100.Client.Private.State
 
   @default_options [
     # Port used for broadcasts.
