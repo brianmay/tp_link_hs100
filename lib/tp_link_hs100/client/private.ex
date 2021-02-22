@@ -29,7 +29,7 @@ defmodule TpLinkHs100.Client.Private do
         update_device(state, Private.ip_to_string(ip), port, sysinfo)
 
       other ->
-        IO.puts("TpLinkHs100.Client.Private: Unknown message to parse: #{inspect(other)}")
+        Logger.error("TpLinkHs100.Client.Private: Unknown message to parse: #{inspect(other)}")
         state
     end
   end
@@ -48,13 +48,6 @@ defmodule TpLinkHs100.Client.Private do
   def send_broadcast_packet(%State{} = state, packet) do
     send_packet(state, state.options[:broadcast_address], state.options[:broadcast_port], packet)
   end
-
-  # def send_targeted_packet(%State{} = state, id, packet) do
-  #   case Map.fetch(state.devices, id) do
-  #     {:ok, device} -> send_packet(state, device.ip, packet)
-  #     :error -> {:error, "No such device id #{id}."}
-  #   end
-  # end
 
   @spec create_udp_socket() :: {:ok, port()} | {:error, atom()}
   def create_udp_socket do

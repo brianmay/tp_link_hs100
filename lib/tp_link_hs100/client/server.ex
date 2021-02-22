@@ -7,14 +7,8 @@ defmodule TpLinkHs100.Client.Server do
   alias TpLinkHs100.Client.Private
   alias TpLinkHs100.Client.Private.State
 
-  @default_options [
-    # Port used for broadcasts.
-    broadcast_port: 9999,
-    # Address used for broadcasts.
-    broadcast_address: "192.168.5.255",
-    # Sending broadcasts every milliseconds.
-    refresh_interval: 5000
-  ]
+  defp get_poll_discover_time, do: Application.get_env(:tp_link_hs100, :poll_discover_time)
+  defp get_multicast, do: Application.get_env(:tp_link_hs100, :multicast)
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: TpLinkHs100.Client)
@@ -23,7 +17,11 @@ defmodule TpLinkHs100.Client.Server do
   @impl true
   @spec init(keyword) :: {:ok, TpLinkHs100.Client.Private.State.t()}
   def init(opts) do
-    opts = Keyword.merge(@default_options, opts)
+    opts =
+      opts
+      |> Keyword.put_new(:broadcast_port, 9999)
+      |> Keyword.put_new(:broadcast_address, get_multicast())
+      |> Keyword.put_new(:refresh_interval, get_poll_discover_time())
 
     {:ok, socket} = Private.create_udp_socket()
 

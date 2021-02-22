@@ -6,6 +6,7 @@ defmodule TpLinkHs100.Device.Private do
   alias TpLinkHs100.Private
 
   # --- Internals
+  defp get_wait_time, do: Application.get_env(:tp_link_hs100, :wait_time)
 
   defmodule State do
     @moduledoc false
@@ -14,10 +15,11 @@ defmodule TpLinkHs100.Device.Private do
             ip: String.t(),
             port: integer(),
             socket: port(),
-            timer: pid() | nil,
+            timer: reference() | nil,
+            dead_timer: reference(),
             queue: Qex.t({GenServer.server(), boolean()})
           }
-    defstruct [:id, :ip, :port, :socket, :timer, :queue]
+    defstruct [:id, :ip, :port, :socket, :timer, :dead_timer, :queue]
   end
 
   @spec create_udp_socket() :: {:ok, port()} | {:error, atom()}
@@ -49,7 +51,7 @@ defmodule TpLinkHs100.Device.Private do
       {:value, {_, power}} ->
         case switch(state, power) do
           :ok ->
-            timer = Process.send_after(self(), :timer, 1_000)
+            timer = Process.send_after(self(), :timer, get_wait_time())
             %State{state | timer: timer}
 
           {:error, error} ->

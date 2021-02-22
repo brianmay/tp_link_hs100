@@ -21,6 +21,12 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
+config :tp_link_hs100,
+  multicast: "192.168.5.255",
+  dead_time: 25 * 1000,
+  poll_discover_time: 10 * 1000,
+  wait_time: 1 * 1000
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
