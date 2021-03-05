@@ -5,7 +5,8 @@ defmodule TpLinkHs100.Client do
 
   @spec refresh :: :ok
   def refresh do
-    GenServer.cast(__MODULE__, :refresh)
+    Process.send_after(__MODULE__, :refresh, 0)
+    :ok
   end
 
   @spec get_devices :: %{required(String.t()) => Device.t()}
